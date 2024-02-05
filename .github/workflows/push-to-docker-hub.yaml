@@ -8,12 +8,12 @@ name: Publish Docker image
 on:
   push:
     branches:
-      - 'master'
-      - 'devel'
-      - 'v*'
+      - "master"
+      - "devel"
+      - "v*"
   pull_request:
     branches:
-      - 'master'
+      - "master"
 
 jobs:
   push_to_registry:
@@ -40,7 +40,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4.0.1
         with:
-          images: yegle/fava
+          images: yzg963/fava
           tags: |
             type=raw,value=latest,enabled={{is_default_branch}}
             type=ref,event=branch,enabled={{!is_default_branch}}
