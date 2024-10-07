@@ -1,5 +1,5 @@
 ARG BEANCOUNT_VERSION=2.3.6
-ARG FAVA_VERSION=v1.27.2
+ARG FAVA_VERSION=v1.27.3
 
 ARG NODE_BUILD_IMAGE=16-bullseye
 FROM node:${NODE_BUILD_IMAGE} as node_build_env
@@ -47,9 +47,8 @@ ADD requirements.txt .
 RUN pip3 install --require-hashes -U -r requirements.txt
 RUN pip3 install git+https://github.com/beancount/beanprice.git@41576e2ac889e4825e4985b6f6c56aa71de28304
 RUN pip3 install git+https://github.com/andreasgerstmayr/fava-dashboards.git
-
+RUN pip3 install git+https://github.com/andreasgerstmayr/fava-portfolio-returns.git@de68b54f3ac517adfde3a4ccb41fdb09a0da41d1
 RUN pip3 uninstall -y pip
-
 RUN find /app -name __pycache__ -exec rm -rf -v {} +
 
 FROM gcr.io/distroless/python3-debian11
