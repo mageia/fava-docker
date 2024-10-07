@@ -1,7 +1,8 @@
 ARG BEANCOUNT_VERSION=2.3.6
-ARG FAVA_VERSION=v1.27.3
-
+ARG FAVA_VERSION=v1.27.2
 ARG NODE_BUILD_IMAGE=16-bullseye
+
+#################################################
 FROM node:${NODE_BUILD_IMAGE} as node_build_env
 ARG FAVA_VERSION
 
@@ -23,6 +24,7 @@ RUN rm -rf .*cache && \
     find . -type f -name '*.py[c0]' -delete && \
     find . -type d -name "__pycache__" -delete
 
+#################################################
 FROM debian:bullseye as build_env
 ARG BEANCOUNT_VERSION
 
@@ -47,19 +49,20 @@ ADD requirements.txt .
 RUN pip3 install --require-hashes -U -r requirements.txt
 RUN pip3 install git+https://github.com/beancount/beanprice.git@41576e2ac889e4825e4985b6f6c56aa71de28304
 RUN pip3 install git+https://github.com/andreasgerstmayr/fava-dashboards.git
-RUN pip3 install git+https://github.com/andreasgerstmayr/fava-portfolio-returns.git@de68b54f3ac517adfde3a4ccb41fdb09a0da41d1
+RUN pip3 install git+https://github.com/andreasgerstmayr/fava-portfolio-returns.git
 RUN pip3 uninstall -y pip
 RUN find /app -name __pycache__ -exec rm -rf -v {} +
 
+#################################################
 FROM gcr.io/distroless/python3-debian11
 COPY --from=build_env /app /app
 
-# Default fava port number
-EXPOSE 5000
-
-ENV BEANCOUNT_FILE ""
-
-ENV FAVA_HOST "0.0.0.0"
 ENV PATH "/app/bin:$PATH"
 
+ENV LANG C.UTF-8
+ENV BEANCOUNT_FILE ""
+ENV FAVA_HOST "0.0.0.0"
+
+EXPOSE 5000
 ENTRYPOINT ["fava"]
+
