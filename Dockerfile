@@ -1,5 +1,5 @@
 ARG BEANCOUNT_VERSION=2.3.6
-ARG FAVA_VERSION=v1.27.2
+ARG FAVA_VERSION=v1.27.3
 ARG NODE_BUILD_IMAGE=16-bullseye
 
 #################################################
@@ -31,7 +31,7 @@ ARG BEANCOUNT_VERSION
 RUN apt-get update
 RUN apt-get install -y build-essential libxml2-dev libxslt-dev curl \
         python3 libpython3-dev python3-pip git python3-venv
-
+RUN apt-get install -y locales && sed -ie 's/# zh_CN.UTF-8 UTF-8/zh_CN.UTF-8 UTF-8/g' /etc/locale.gen && locale-gen
 
 ENV PATH "/app/bin:$PATH"
 RUN python3 -mvenv /app
@@ -56,10 +56,10 @@ RUN find /app -name __pycache__ -exec rm -rf -v {} +
 #################################################
 FROM gcr.io/distroless/python3-debian11
 COPY --from=build_env /app /app
+COPY --from=build_env /usr/lib/locale/locale-archive /usr/lib/locale/locale-archive
 
+ENV LANG zh_CN.UTF-8
 ENV PATH "/app/bin:$PATH"
-
-ENV LANG C.UTF-8
 ENV BEANCOUNT_FILE ""
 ENV FAVA_HOST "0.0.0.0"
 
